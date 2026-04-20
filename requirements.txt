@@ -1,0 +1,9 @@
+Flask
+pymupdf
+pikepdf
+pdf2docx
+pandas
+tabula-py
+Authlib
+requests
+gunicorn

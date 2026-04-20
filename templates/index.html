@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESERT PDF - Professional UAE Document Partner</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome (Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- PDF Editor Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        deepnavy: '#060B14',
+                        charcoal: '#111827',
+                        neoncyan: '#00F0FF',
+                        neonblue: '#2563EB',
+                        neonpurple: '#9D00FF',
+                        neongold: '#FFD700',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* SVG Grid Background */
+        .bg-grid {
+            background-size: 50px 50px;
+            background-position: center top;
+            transition: background-image 0.5s ease;
+        }
+        
+        html.dark .bg-grid {
+            background-color: #060B14;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            color: #ffffff;
+        }
+
+        html:not(.dark) .bg-grid {
+            background-color: #F8FAFC;
+            background-image: 
+                linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+            color: #1E293B;
+        }
+
+        /* Animated Mesh Gradient Blobs */
+        .blob-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            animation: floatBlob 25s infinite alternate ease-in-out;
+        }
+
+        html:not(.dark) .blob {
+            opacity: 0.15;
+            filter: blur(80px);
+        }
+
+        .blob-blue { 
+            background: rgba(0, 240, 255, 0.6); 
+            width: 600px; 
+            height: 600px; 
+            top: -10%; 
+            left: -10%; 
+            animation-delay: 0s; 
+        }
+        .blob-purple { 
+            background: rgba(157, 0, 255, 0.5); 
+            width: 700px; 
+            height: 700px; 
+            bottom: -20%; 
+            right: -10%; 
+            animation-delay: -5s; 
+        }
+        .blob-blue2 { 
+            background: rgba(37, 99, 235, 0.6); 
+            width: 500px; 
+            height: 500px; 
+            top: 40%; 
+            left: 40%; 
+            animation-delay: -10s; 
+        }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(30px, -50px) scale(1.1) rotate(15deg); }
+            66% { transform: translate(-40px, 40px) scale(0.9) rotate(-5deg); }
+            100% { transform: translate(10px, 20px) scale(1.05) rotate(10deg); }
+        }
+
+        /* Glassmorphism General App Panels */
+        .glass-panel {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        html.dark .glass-panel {
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        html:not(.dark) .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.15);
+        }
+
+        /* Feature Cards Premium Glass */
+        .card-glass {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        html.dark .card-glass {
+            background: rgba(17, 24, 39, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        html.dark .card-glass:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 240, 255, 0.15);
+            transform: translateY(-5px);
+        }
+        html:not(.dark) .card-glass {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px rgba(100, 116, 139, 0.05);
+        }
+        html:not(.dark) .card-glass:hover {
+            background: rgba(255, 255, 255, 1);
+            border-color: rgba(37, 99, 235, 0.3);
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.1);
+            transform: translateY(-5px);
+        }
+
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
+
+        /* Premium Text Gradient */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(135deg, #00F0FF, #2563EB);
+        }
+
+        /* Smooth Button Glows */
+        .btn-smooth {
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        html.dark .btn-smooth:hover {
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+            border-color: rgba(0, 240, 255, 0.6) !important;
+            transform: translateY(-3px) scale(1.02);
+            background-color: rgba(0, 240, 255, 0.08);
+        }
+        html.dark .btn-smooth-gold:hover {
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+            border-color: rgba(255, 215, 0, 0.6) !important;
+            transform: translateY(-3px) scale(1.02);
+            background-color: rgba(255, 215, 0, 0.08);
+        }
+
+        html:not(.dark) .btn-smooth:hover {
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
+            border-color: rgba(37, 99, 235, 0.5) !important;
+            transform: translateY(-3px) scale(1.02);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+        html:not(.dark) .btn-smooth-gold:hover {
+            box-shadow: 0 10px 25px rgba(217, 119, 6, 0.2);
+            border-color: rgba(217, 119, 6, 0.5) !important;
+            transform: translateY(-3px) scale(1.02);
+            background-color: rgba(217, 119, 6, 0.05);
+        }
+
+        /* Drag Zone Active State */
+        .drag-active {
+            border-color: #00F0FF !important;
+            background: rgba(0, 240, 255, 0.05) !important;
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.15) inset !important;
+            transform: scale(1.01);
+        }
+
+        /* Full-Screen Loader */
+        .loader-ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #00F0FF;
+            border-right: 4px solid #9D00FF;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.4));
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-grid transition-colors duration-700">
+
+    <!-- Theme Initialization Script -->
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+
+    <!-- Animated Mesh Gradient Blobs -->
+    <div class="blob-container">
+        <div class="blob blob-blue"></div>
+        <div class="blob blob-purple"></div>
+        <div class="blob blob-blue2"></div>
+    </div>
+
+    <!-- Early Bird Offer Banner -->
+    <div class="w-full bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-600 text-white text-center py-2.5 px-4 z-[100] relative overflow-hidden group cursor-pointer shadow-[0_4px_20px_rgba(99,102,241,0.5)]">
+        <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-[250%] transition-transform duration-[1.5s]"></div>
+        <p class="text-xs sm:text-sm font-bold tracking-wide animate-pulse">
+            <i class="fa-solid fa-gift mr-2 text-amber-300 drop-shadow-[0_0_5px_rgba(252,211,77,0.8)]"></i> Early Bird Offer: Get 14 Days Premium Free! <span class="ml-2 underline hover:text-cyan-200 transition">Claim Now</span>
+        </p>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="w-full py-4 px-6 md:px-10 flex justify-between items-center z-50 glass-panel sticky top-0 border-b border-gray-200 dark:border-white/5">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                <i class="fa-solid fa-layer-group text-lg text-white"></i>
+            </div>
+            <h1 class="text-xl md:text-2xl font-black tracking-tight text-slate-800 dark:text-white">
+                DESERT<span class="text-gradient">PDF</span>
+            </h1>
+        </div>
+        
+        <nav class="hidden md:flex gap-8 text-sm font-semibold tracking-wide text-gray-600 dark:text-gray-300 items-center">
+            <div class="relative group cursor-pointer inline-block py-1">
+                <a class="hover:text-blue-500 dark:hover:text-neoncyan transition duration-300 flex items-center gap-1.5 focus:outline-none">All PDF Tools <i class="fa-solid fa-chevron-down text-[10px]"></i></a>
+                <!-- Dropdown Menu -->
+                <div class="absolute top-full left-0 w-48 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-300 z-[100] flex flex-col py-2 mt-1">
+                    <a href="#action-options" class="px-5 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-gray-200 transition text-sm flex items-center gap-3"><i class="fa-solid fa-object-group text-blue-500 w-4 text-center"></i> Merge PDF</a>
+                    <a href="#action-options" class="px-5 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-gray-200 transition text-sm flex items-center gap-3"><i class="fa-solid fa-scissors text-emerald-500 w-4 text-center"></i> Split PDF</a>
+                    <a href="#action-options" class="px-5 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-gray-200 transition text-sm flex items-center gap-3"><i class="fa-solid fa-compress text-amber-500 w-4 text-center"></i> Compress PDF</a>
+                    <a href="#action-options" class="px-5 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-gray-200 transition text-sm flex items-center gap-3"><i class="fa-solid fa-file-excel text-green-600 w-4 text-center"></i> PDF to Excel</a>
+                    <div class="h-px w-full bg-gray-100 dark:bg-white/5 my-1"></div>
+                    <a href="#action-options" class="px-5 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-gray-200 transition text-sm flex items-center gap-3"><i class="fa-solid fa-layer-group text-sky-500 w-4 text-center"></i> Organize</a>
+                    <a href="#action-options" class="px-5 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-gray-200 transition text-sm flex items-center gap-3"><i class="fa-solid fa-list-ol text-cyan-500 w-4 text-center"></i> Page Number</a>
+                    <div class="h-px w-full bg-gray-100 dark:bg-white/5 my-1"></div>
+                    <a href="#action-options" class="px-5 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-gray-200 transition text-sm flex items-center gap-3"><i class="fa-solid fa-lock-open text-purple-500 w-4 text-center"></i> Unlock PDF</a>
+                    <a href="#action-options" class="px-5 py-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-gray-200 transition text-sm flex items-center gap-3"><i class="fa-solid fa-lock text-red-500 w-4 text-center"></i> Protect PDF</a>
+                </div>
+            </div>
+            <a href="#" class="hover:text-blue-500 dark:hover:text-neoncyan transition duration-300">Home</a>
+            <a href="#how-it-works" class="hover:text-blue-500 dark:hover:text-neoncyan transition duration-300">Process</a>
+            <a href="#templates" class="hover:text-blue-500 dark:hover:text-neoncyan transition duration-300">Templates</a>
+        </nav>
+
+        <div class="flex items-center gap-3 md:gap-4">
+            
+            {% if user %}
+            <!-- User Profile Dropdown -->
+            <div class="relative group cursor-pointer hidden sm:block">
+                <div class="flex items-center gap-2 bg-white/40 dark:bg-slate-800/40 border border-gray-200 dark:border-white/10 pl-1.5 pr-4 py-1.5 rounded-full shadow-sm hover:border-blue-400 dark:hover:border-neoncyan transition glass-panel">
+                    <img src="{{ user.picture }}" alt="Profile" class="w-8 h-8 rounded-full shadow-sm border border-white/20 object-cover">
+                    <span class="text-sm font-bold text-slate-700 dark:text-white whitespace-nowrap max-w-[100px] overflow-hidden text-ellipsis">{{ user.name }}</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 ml-1"></i>
+                </div>
+                <!-- Profile Menu -->
+                <div class="absolute right-0 top-full mt-2 w-56 bg-white/90 dark:bg-slate-800/95 border border-gray-100 dark:border-white/10 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-300 z-[100] flex flex-col py-2 card-glass backdrop-blur-3xl">
+                    <div class="px-5 py-4 border-b border-gray-100 dark:border-white/5">
+                        <p class="text-[10px] text-blue-500 dark:text-neoncyan font-black uppercase tracking-widest mb-1.5 drop-shadow-sm">Authenticated</p>
+                        <p class="text-sm font-bold truncate text-slate-800 dark:text-white">{{ user.name }}</p>
+                        <p class="text-xs font-semibold truncate text-gray-500 dark:text-gray-400 mt-1">{{ user.email }}</p>
+                    </div>
+                    <a href="/logout" class="mx-2 mt-2 px-4 py-2.5 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400 font-bold transition rounded-xl text-sm flex items-center gap-3 group-logout"><i class="fa-solid fa-power-off w-4 text-center"></i> Sign Out</a>
+                </div>
+            </div>
+            {% else %}
+            <!-- Login Button -->
+            <a href="/login" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold tracking-wide shadow-[0_0_15px_rgba(37,99,235,0.4)] transition transform hover:-translate-y-0.5 flex items-center gap-2 text-sm border border-blue-400/30">
+                <i class="fa-brands fa-google"></i> Login
+            </a>
+            {% endif %}
+
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 transition outline-none">
+                <i class="fa-solid fa-moon dark:hidden text-lg"></i>
+                <i class="fa-solid fa-sun hidden dark:block text-lg text-amber-300 drop-shadow-[0_0_8px_rgba(252,211,77,0.8)]"></i>
+            </button>
+            <button class="md:hidden text-2xl text-gray-600 dark:text-white focus:outline-none ml-2">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 flex flex-col items-center z-10 relative">
+        
+        <!-- Trust Badges (Tighter Spacing) -->
+        <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-4" id="trust-badges">
+            <div class="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-200 dark:border-emerald-500/30">
+                <i class="fa-solid fa-shield-halved"></i> 100% Encrypted
+            </div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-blue-600 dark:text-sky-300 bg-blue-50 dark:bg-sky-500/10 px-3 py-1.5 rounded-full border border-blue-200 dark:border-sky-500/30">
+                <i class="fa-solid fa-bolt"></i> Lightning Fast
+            </div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-200 dark:border-amber-500/30">
+                <i class="fa-solid fa-user-xmark"></i> No Signup Required
+            </div>
+        </div>
+
+        <!-- Hero Title -->
+        <div class="text-center mb-5" id="hero-title">
+            <h2 class="text-5xl md:text-[5rem] leading-tight font-black mb-3 text-slate-900 dark:text-white drop-shadow-sm">
+                Master Your <span class="text-gradient">PDFs</span>
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300 text-lg font-medium max-w-2xl mx-auto drop-shadow-sm">
+                The ultimate smart document processing tool for the UAE.<br class="hidden sm:block"> 
+                Merge, compress, edit, and convert instantly.
+            </p>
+        </div>
+
+        <!-- Live Counter (Tighter Spacing) -->
+        <div class="mb-8 flex items-center justify-center gap-3">
+            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]"></div>
+            <span class="text-xs md:text-sm font-semibold text-gray-600 dark:text-gray-300 tracking-wide uppercase">Live: <span class="text-blue-600 dark:text-neoncyan font-bold text-base" id="counter">1,240</span> Files Processed today</span>
+        </div>
+
+        <!-- Interactive Drag & Drop Area -->
+        <div class="w-full max-w-4xl glass-panel rounded-3xl p-6 md:p-8 relative shadow-2xl" id="upload-wrapper">
+            
+            <form action="/merge" method="post" enctype="multipart/form-data" id="upload-form" class="w-full flex flex-col items-center">
+                
+                <!-- Hidden inputs -->
+                <input type="file" name="pdfs" id="file-input" multiple accept=".pdf" class="hidden" required>
+                <input type="hidden" name="watermark_text" id="watermark-input">
+                <input type="hidden" name="edit_text" id="edit-input">
+                <input type="hidden" name="split_pages" id="split-input">
+                <input type="hidden" name="unlock_pass" id="unlock-input">
+                <input type="hidden" name="protect_pass" id="protect-input">
+                <input type="hidden" name="page_numbers" id="pagenum-input">
+                
+                <!-- Droppable Area Zone -->
+                <div id="drop-zone" class="w-full border-2 border-dashed border-blue-300 dark:border-white/20 rounded-2xl py-12 px-6 cursor-pointer flex flex-col items-center justify-center hover:border-blue-500 dark:hover:border-neoncyan/60 hover:bg-white/50 dark:hover:bg-white/[0.03] transition-all duration-300">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-blue-100 to-cyan-50 dark:from-neoncyan/10 dark:to-blue-600/20 rounded-full flex items-center justify-center mb-5 relative border border-blue-200 dark:border-neoncyan/30 shadow-inner" id="upload-icon-box">
+                        <i class="fa-solid fa-cloud-arrow-up text-4xl text-blue-500 dark:text-neoncyan" id="upload-icon"></i>
+                        <div class="absolute inset-0 rounded-full border border-blue-400 dark:border-neoncyan/40 animate-ping opacity-60 hidden dark:block"></div>
+                    </div>
+                    
+                    <h3 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-2 text-center tracking-tight">Drag & Drop documents here</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-6 font-medium text-center text-sm">Or browse securely from your device (Max 50MB)</p>
+                    
+                    <label for="file-input" class="bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg shadow-blue-500/25 dark:shadow-[0_0_20px_rgba(0,240,255,0.25)] hover:shadow-xl hover:shadow-blue-500/40 dark:hover:shadow-[0_0_30px_rgba(0,240,255,0.4)] cursor-pointer transition-all duration-300 transform hover:-translate-y-1 z-20 flex items-center gap-2 border border-blue-400/50">
+                        <i class="fa-solid fa-file-import"></i> Browse Files
+                    </label>
+
+                    <div id="file-list" class="mt-6 text-sm sm:text-base font-semibold flex flex-col gap-2 w-full max-w-md"></div>
+                </div>
+
+                <!-- Action Options Grid -->
+                <div id="action-options" class="w-full mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 hidden z-20">
+                    
+                    <!-- Merge -->
+                    <button type="button" onclick="triggerAction('/merge')" class="glass-panel border border-blue-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-object-group text-xl text-blue-500 dark:text-neoncyan"></i> <span class="font-bold text-xs tracking-tight">Merge</span>
+                    </button>
+                    <!-- Split -->
+                    <button type="button" onclick="openModal('split-modal', 'split-text-input')" class="glass-panel border border-emerald-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-scissors text-xl text-emerald-500"></i> <span class="font-bold text-xs tracking-tight">Split</span>
+                    </button>
+                    <!-- Compress -->
+                    <button type="button" onclick="triggerAction('/compress')" class="glass-panel border border-amber-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth-gold py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-compress text-xl text-amber-500 dark:text-neongold"></i> <span class="font-bold text-xs tracking-tight">Compress</span>
+                    </button>
+                    <!-- Organize -->
+                    <button type="button" onclick="triggerAction('/organize')" class="glass-panel border border-sky-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-layer-group text-xl text-sky-500"></i> <span class="font-bold text-xs tracking-tight">Organize</span>
+                    </button>
+                    <!-- Edit PDF -->
+                    <button type="button" onclick="openVisualEditor()" class="glass-panel border border-blue-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-xl text-blue-500 dark:text-neoncyan"></i> <span class="font-bold text-xs tracking-tight">Edit PDF</span>
+                    </button>
+                    <!-- Watermark -->
+                    <button type="button" onclick="openModal('watermark-modal', 'watermark-text-input')" class="glass-panel border border-amber-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth-gold py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-stamp text-xl text-amber-500 dark:text-neongold"></i> <span class="font-bold text-xs tracking-tight">Watermark</span>
+                    </button>
+                    <!-- Page Num -->
+                    <button type="button" onclick="openModal('pagenum-modal', 'pagenum-text-input')" class="glass-panel border border-cyan-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-list-ol text-xl text-cyan-500"></i> <span class="font-bold text-xs tracking-tight">Page No.</span>
+                    </button>
+                    <!-- To Image -->
+                    <button type="button" onclick="triggerAction('/convert')" class="glass-panel border border-indigo-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-image text-xl text-indigo-500"></i> <span class="font-bold text-xs tracking-tight">To Image</span>
+                    </button>
+                    <!-- To Word -->
+                    <button type="button" onclick="triggerAction('/word')" class="glass-panel border border-amber-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth-gold py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-word text-xl text-amber-500 dark:text-neongold"></i> <span class="font-bold text-xs tracking-tight">To Word</span>
+                    </button>
+                    <!-- To Excel -->
+                    <button type="button" onclick="triggerAction('/excel')" class="glass-panel border border-green-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-excel text-xl text-green-600"></i> <span class="font-bold text-xs tracking-tight">To Excel</span>
+                    </button>
+                    <!-- Unlock -->
+                    <button type="button" onclick="openModal('unlock-modal', 'unlock-text-input')" class="glass-panel border border-purple-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-lock-open text-xl text-purple-500"></i> <span class="font-bold text-xs tracking-tight">Unlock</span>
+                    </button>
+                    <!-- Protect -->
+                    <button type="button" onclick="openModal('protect-modal', 'protect-text-input')" class="glass-panel border border-red-200 dark:border-white/10 text-slate-700 dark:text-gray-200 btn-smooth py-3.5 px-2 rounded-xl cursor-pointer flex flex-col items-center justify-center gap-2">
+                        <i class="fa-solid fa-lock text-xl text-red-500"></i> <span class="font-bold text-xs tracking-tight">Protect</span>
+                    </button>
+
+                </div>
+            </form>
+        </div>
+
+        <!-- How It Works Section -->
+        <div id="how-it-works" class="w-full mt-24 sm:mt-32 text-center max-w-5xl">
+            <h3 class="text-3xl font-black mb-12 text-slate-900 dark:text-white">Seamless Workflow</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                <!-- Connector Line -->
+                <div class="hidden md:block absolute top-[2.2rem] left-[15%] w-[70%] h-[2px] bg-gradient-to-r from-blue-300 via-purple-300 to-emerald-300 dark:from-sky-700 dark:via-purple-700 dark:to-emerald-700 z-0"></div>
+                
+                <div class="flex flex-col items-center relative z-10">
+                    <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 text-blue-600 dark:text-cyan-400 flex items-center justify-center text-xl font-black mb-5 shadow-xl border border-gray-100 dark:border-slate-700">1</div>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Upload Securely</h4>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium px-4">AES-256 encrypted transfers. Files auto-deleted after 1 hour.</p>
+                </div>
+                <div class="flex flex-col items-center relative z-10">
+                    <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl font-black mb-5 shadow-xl border border-gray-100 dark:border-slate-700">2</div>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Select Action</h4>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium px-4">Choose from merging, compressing, or formatting cleanly.</p>
+                </div>
+                <div class="flex flex-col items-center relative z-10">
+                    <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-black mb-5 shadow-xl border border-gray-100 dark:border-slate-700">3</div>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Download Instant</h4>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium px-4">High-fidelity resulting PDF ready for official UAE portal use.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool Features Preview (Premium Glass Cards) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-24">
+            <div class="card-glass flex flex-col items-center text-center">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/40 dark:to-cyan-900/40 flex items-center justify-center mb-5 border border-blue-200 dark:border-cyan-700/50 shadow-inner">
+                    <i class="fa-solid fa-object-group text-2xl text-blue-600 dark:text-cyan-400"></i>
+                </div>
+                <h4 class="text-lg font-bold mb-2 text-slate-800 dark:text-white">Intelligent Merge</h4>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Combine multiple documents quickly into a single sequenced file.</p>
+            </div>
+            <div class="card-glass flex flex-col items-center text-center">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-yellow-100 dark:from-amber-900/40 dark:to-yellow-900/40 flex items-center justify-center mb-5 border border-amber-200 dark:border-yellow-700/50 shadow-inner">
+                    <i class="fa-solid fa-compress text-2xl text-amber-600 dark:text-yellow-400"></i>
+                </div>
+                <h4 class="text-lg font-bold mb-2 text-slate-800 dark:text-white">Lossless Compress</h4>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Reduce file footprints significantly to pass strict portal limits.</p>
+            </div>
+            <div class="card-glass flex flex-col items-center text-center">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 flex items-center justify-center mb-5 border border-purple-200 dark:border-pink-700/50 shadow-inner">
+                    <i class="fa-solid fa-language text-2xl text-purple-600 dark:text-pink-400"></i>
+                </div>
+                <h4 class="text-lg font-bold mb-2 text-slate-800 dark:text-white">Arabic Native Editor</h4>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Absolute flawless RTL Arabic typography without string tearing.</p>
+            </div>
+        </div>
+
+        <!-- Free UAE Document Templates -->
+        <div id="templates" class="w-full mt-32 mb-10">
+            <h3 class="text-3xl font-black text-center mb-3 text-slate-900 dark:text-white">Free UAE Document Templates</h3>
+            <p class="text-center font-medium text-gray-500 dark:text-gray-400 mb-10">Download ready-to-use, government-accepted formats instantly.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- NOC -->
+                <div class="card-glass p-5 rounded-2xl flex items-center gap-4 group">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition">
+                        <i class="fa-solid fa-file-signature text-xl text-slate-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-800 dark:text-white text-sm">NOC Letter Format</h4>
+                        <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 mt-0.5">Standard associate NOC</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="loadTemplateIntoEditor('/static/templates_files/noc.pdf', 'NOC_Letter_Format.pdf')" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-cyan-400 hover:bg-blue-50 dark:hover:bg-slate-700 transition" title="Edit Template">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </button>
+                        <a href="/static/templates_files/noc.pdf" download class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-700 transition" title="Download Template">
+                            <i class="fa-solid fa-download"></i>
+                        </a>
+                    </div>
+                </div>
+                <!-- Ejari -->
+                <div class="card-glass p-5 rounded-2xl flex items-center gap-4 group">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/40 transition">
+                        <i class="fa-solid fa-house-user text-xl text-slate-600 dark:text-gray-400 group-hover:text-amber-600 dark:group-hover:text-yellow-400 transition"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-800 dark:text-white text-sm">Rent Agreement (Ejari)</h4>
+                        <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 mt-0.5">Draft format for tenancy</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="loadTemplateIntoEditor('/static/templates_files/ejari.pdf', 'Ejari_Agreement.pdf')" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-cyan-400 hover:bg-blue-50 dark:hover:bg-slate-700 transition" title="Edit Template">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </button>
+                        <a href="/static/templates_files/ejari.pdf" download class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-slate-700 transition" title="Download Template">
+                            <i class="fa-solid fa-download"></i>
+                        </a>
+                    </div>
+                </div>
+                <!-- Salary -->
+                <div class="card-glass p-5 rounded-2xl flex items-center gap-4 group">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 dark:group-hover:bg-purple-900/40 transition">
+                        <i class="fa-solid fa-file-invoice-dollar text-xl text-slate-600 dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-pink-400 transition"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-800 dark:text-white text-sm">Salary Certificate</h4>
+                        <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 mt-0.5">Bank-accepted standard</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="loadTemplateIntoEditor('/static/templates_files/salary_cert.pdf', 'Salary_Certificate.pdf')" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-cyan-400 hover:bg-blue-50 dark:hover:bg-slate-700 transition" title="Edit Template">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </button>
+                        <a href="/static/templates_files/salary_cert.pdf" download class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-slate-700 transition" title="Download Template">
+                            <i class="fa-solid fa-download"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent UAE PDF Updates (News) -->
+        <div id="news-updates" class="w-full mt-32 mb-10">
+            <h3 class="text-3xl font-black text-center mb-3 text-slate-900 dark:text-white">Recent UAE Document Updates</h3>
+            <p class="text-center font-medium text-gray-500 dark:text-gray-400 mb-10">Stay informed on the latest regional formatting requirements.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card-glass p-6 rounded-2xl flex flex-col gap-3 group cursor-pointer">
+                    <span class="text-xs font-bold text-blue-600 dark:text-cyan-400 uppercase tracking-widest">ICP Rules</span>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-lg leading-snug group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition">New ICP rules for Visa PDFs</h4>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 line-clamp-3">The Federal Authority for Identity, Citizenship, Customs & Port Security (ICP) announced new minimum resolution constraints for uploaded attachments...</p>
+                    <div class="mt-auto pt-4 flex items-center text-xs font-bold text-gray-400 dark:text-gray-500 group-hover:text-amber-500 transition">Read More <i class="fa-solid fa-arrow-right ml-2"></i></div>
+                </div>
+                <div class="card-glass p-6 rounded-2xl flex flex-col gap-3 group cursor-pointer">
+                    <span class="text-xs font-bold text-amber-600 dark:text-yellow-400 uppercase tracking-widest">DED Guidelines</span>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-lg leading-snug group-hover:text-amber-600 dark:group-hover:text-yellow-400 transition">Trade License size optimization tips</h4>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 line-clamp-3">Submitting your Trade License copy to the DED portal requires the PDF size to be strictly under 2MB. Use our lossless compression tool to pass immediately...</p>
+                    <div class="mt-auto pt-4 flex items-center text-xs font-bold text-gray-400 dark:text-gray-500 group-hover:text-amber-500 transition">Read More <i class="fa-solid fa-arrow-right ml-2"></i></div>
+                </div>
+                <div class="card-glass p-6 rounded-2xl flex flex-col gap-3 group cursor-pointer">
+                    <span class="text-xs font-bold text-purple-600 dark:text-pink-400 uppercase tracking-widest">Dubai Courts</span>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-lg leading-snug group-hover:text-purple-600 dark:group-hover:text-pink-400 transition">Proper Arabic formatting for POA</h4>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 line-clamp-3">Dubai Courts now mandate strict RTL typography. Standard editors often break Arabic ligatures. Our native editor ensures perfectly joined text...</p>
+                    <div class="mt-auto pt-4 flex items-center text-xs font-bold text-gray-400 dark:text-gray-500 group-hover:text-amber-500 transition">Read More <i class="fa-solid fa-arrow-right ml-2"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subscription Plans Section -->
+        <div id="pricing" class="w-full mt-32 mb-10">
+            <div class="text-center mb-16">
+                <h3 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white drop-shadow-sm mb-4">Subscription <span class="text-gradient">Plans</span></h3>
+                <p class="text-lg font-medium text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">Flexible premium options built for professionals and dynamic businesses in the UAE.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10 items-stretch max-w-6xl mx-auto px-4 lg:px-0">
+                
+                <!-- Starter Card -->
+                <div class="card-glass p-8 rounded-[2rem] flex flex-col hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 border border-gray-200 dark:border-white/10 hover:shadow-2xl group">
+                    <h4 class="text-2xl font-black text-slate-800 dark:text-white mb-2">Starter</h4>
+                    <p class="text-sm font-bold text-emerald-500 dark:text-emerald-400 mb-8 uppercase tracking-widest">Free Forever</p>
+                    <div class="mb-8">
+                        <span class="text-5xl font-black text-slate-900 dark:text-white">0 <span class="text-xl">AED</span></span>
+                    </div>
+                    <ul class="flex flex-col gap-4 text-sm font-semibold text-gray-600 dark:text-gray-300 mb-8 flex-1">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 p-1 rounded-full"></i> 3 Files per day</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 p-1 rounded-full"></i> Basic Tools</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 p-1 rounded-full"></i> 1-hour file storage</li>
+                    </ul>
+                    <a href="https://wa.me/971505637009?text=Hi%20SmartPDF%20UAE%2C%20I%20want%20to%20subscribe%20to%20the%20Starter%20for%200%20AED.%20Please%20send%20me%20the%20payment%20details." target="_blank" class="w-full py-3.5 rounded-xl border-2 border-gray-300 dark:border-white/20 text-slate-800 dark:text-white font-bold hover:bg-gray-100 dark:hover:bg-white/10 transition mt-auto group-hover:border-emerald-500 text-center flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-emerald-500 text-lg"></i> Start Free
+                    </a>
+                </div>
+
+                <!-- Pro Card (Recommended) -->
+                <div class="card-glass p-8 rounded-[2rem] flex flex-col hover:-translate-y-2 hover:scale-[1.05] transition-all duration-300 relative border-2 border-amber-400 dark:border-neongold shadow-[0_0_40px_rgba(255,215,0,0.2)] dark:shadow-[0_0_40px_rgba(255,215,0,0.15)] z-10 lg:-mt-6 lg:-mb-6 bg-white/70 dark:bg-slate-800/90 hover:shadow-[0_0_50px_rgba(255,215,0,0.3)]">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-xs font-black px-5 py-1.5 rounded-full shadow-lg border border-yellow-300 drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]">RECOMMENDED</div>
+                    <h4 class="text-2xl font-black text-slate-800 dark:text-white mb-2">UAE Business Pro</h4>
+                    <p class="text-sm font-bold text-blue-600 dark:text-neoncyan mb-8 uppercase tracking-widest">Most Popular</p>
+                    <div class="mb-8">
+                        <span class="text-5xl font-black text-slate-900 dark:text-white">39 <span class="text-xl">AED</span></span>
+                        <span class="text-gray-500 dark:text-gray-400 font-medium">/Month</span>
+                    </div>
+                    <ul class="flex flex-col gap-4 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-10 flex-1">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-600 dark:text-neoncyan bg-blue-50 dark:bg-neoncyan/10 p-1 rounded-full"></i> Unlimited Files</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-600 dark:text-neoncyan bg-blue-50 dark:bg-neoncyan/10 p-1 rounded-full"></i> Full Studio Editor Access</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-600 dark:text-neoncyan bg-blue-50 dark:bg-neoncyan/10 p-1 rounded-full"></i> Premium Arabic Support</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-600 dark:text-neoncyan bg-blue-50 dark:bg-neoncyan/10 p-1 rounded-full"></i> No Ads</li>
+                    </ul>
+                    <a href="https://wa.me/971505637009?text=Hi%20SmartPDF%20UAE%2C%20I%20want%20to%20subscribe%20to%20the%20UAE%20Business%20Pro%20for%2039%20AED.%20Please%20send%20me%20the%20payment%20details." target="_blank" class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-black hover:from-amber-400 hover:to-yellow-400 shadow-[0_0_20px_rgba(255,215,0,0.5)] transition duration-300 mt-auto transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(255,215,0,0.7)] text-center flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-xl"></i> Get Pro
+                    </a>
+                </div>
+
+                <!-- Enterprise Card -->
+                <div class="card-glass p-8 rounded-[2rem] flex flex-col hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 border border-gray-200 dark:border-white/10 hover:shadow-2xl">
+                    <h4 class="text-2xl font-black text-slate-800 dark:text-white mb-2">Enterprise</h4>
+                    <p class="text-sm font-bold text-purple-500 dark:text-purple-400 mb-8 uppercase tracking-widest">For Teams</p>
+                    <div class="mb-8">
+                        <span class="text-5xl font-black text-slate-900 dark:text-white">99 <span class="text-xl">AED</span></span>
+                        <span class="text-gray-500 dark:text-gray-400 font-medium">/Month</span>
+                    </div>
+                    <ul class="flex flex-col gap-4 text-sm font-semibold text-gray-600 dark:text-gray-300 mb-8 flex-1">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-purple-500 bg-purple-50 dark:bg-purple-500/10 p-1 rounded-full"></i> Team Access (5 Users)</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-purple-500 bg-purple-50 dark:bg-purple-500/10 p-1 rounded-full"></i> Custom UAE Templates</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-purple-500 bg-purple-50 dark:bg-purple-500/10 p-1 rounded-full"></i> Priority Support</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-purple-500 bg-purple-50 dark:bg-purple-500/10 p-1 rounded-full"></i> 7-day cloud storage</li>
+                    </ul>
+                    <a href="https://wa.me/971505637009?text=Hi%20SmartPDF%20UAE%2C%20I%20want%20to%20subscribe%20to%20the%20Enterprise%20for%2099%20AED.%20Please%20send%20me%20the%20payment%20details." target="_blank" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold hover:from-purple-500 hover:to-indigo-500 shadow-[0_0_15px_rgba(147,51,234,0.4)] transition mt-auto transform hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] text-center flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Contact Sales
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Professional Footer -->
+    <footer class="w-full py-12 mt-auto z-10 glass-panel border-t border-gray-200 dark:border-white/5 relative bg-white/50 dark:bg-slate-900/50">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="text-center md:text-left">
+                <h4 class="font-black text-2xl tracking-tight text-slate-800 dark:text-white mb-2">DESERT<span class="text-gradient">PDF</span></h4>
+                <p class="text-gray-500 dark:text-gray-400 font-semibold text-sm">Your Professional PDF Partner in the UAE.</p>
+            </div>
+            
+            <div class="flex gap-6 text-sm font-bold text-gray-500 dark:text-gray-300">
+                <a href="#" class="hover:text-blue-600 dark:hover:text-cyan-400 transition">Contact Us</a>
+                <a href="#" class="hover:text-blue-600 dark:hover:text-cyan-400 transition">Privacy Policy</a>
+                <a href="#" class="hover:text-blue-600 dark:hover:text-cyan-400 transition">Terms of Service</a>
+            </div>
+
+            <div class="flex gap-4">
+                <a href="#" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-cyan-900/30 dark:hover:text-cyan-400 transition shadow-sm">
+                    <i class="fa-brands fa-linkedin-in text-lg"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-cyan-900/30 dark:hover:text-cyan-400 transition shadow-sm">
+                    <i class="fa-brands fa-twitter text-lg"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-amber-100 hover:text-amber-600 dark:hover:bg-yellow-900/30 dark:hover:text-yellow-400 transition shadow-sm">
+                    <i class="fa-brands fa-instagram text-lg"></i>
+                </a>
+            </div>
+        </div>
+        <div class="text-center mt-10">
+            <p class="text-gray-400 dark:text-gray-500 text-xs font-semibold tracking-widest uppercase mb-0">
+                &copy; 2026 DESERT PDF - All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Full-Screen Loader -->
+    <div id="full-loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 bg-slate-900/90 dark:bg-black/90 backdrop-blur-lg hidden opacity-0 transition-opacity duration-300">
+        <div class="loader-ring mb-10"></div>
+        <h3 id="loader-title" class="text-3xl font-black text-white tracking-tight mb-2">Uploading Document...</h3>
+        <p id="loader-subtitle" class="text-sky-300 dark:text-cyan-400 font-semibold text-sm animate-pulse tracking-wide uppercase">Processing & Authenticating</p>
+    </div>
+
+    <!-- Modals (Watermark & Edit) -->
+    
+    <!-- Watermark Modal -->
+    <div id="watermark-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 dark:bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="card-glass w-full max-w-sm transform scale-95 transition-transform duration-300 relative shadow-2xl" id="watermark-modal-content">
+            <button onclick="closeModal('watermark-modal')" class="absolute top-5 right-5 text-gray-400 hover:text-amber-500 dark:hover:text-neongold transition text-xl outline-none">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-yellow-500/10 flex items-center justify-center border border-amber-300 dark:border-yellow-700/50 shadow-inner">
+                    <i class="fa-solid fa-stamp text-xl text-amber-600 dark:text-yellow-400"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white tracking-wide">Add Watermark</h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium mb-5">Enter text to stamp across your PDF pages.</p>
+            <input type="text" id="watermark-text-input" placeholder="e.g. STRICTLY CONFIDENTIAL" class="w-full bg-white dark:bg-slate-800/80 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-slate-800 dark:text-white placeholder-gray-400 font-medium focus:outline-none focus:border-amber-400 dark:focus:border-yellow-500 focus:ring-1 focus:ring-amber-400 transition-all mb-8 shadow-inner">
+            <div class="flex gap-3 justify-end relative z-10">
+                <button onclick="closeModal('watermark-modal')" class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition font-semibold">Cancel</button>
+                <button onclick="applyModalData('watermark-text-input', 'watermark-input', '/watermark', 'watermark-modal')" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-white dark:text-deepnavy hover:from-amber-400 hover:to-yellow-400 font-bold transition-all shadow-lg shadow-amber-500/30 flex items-center gap-2">
+                    <i class="fa-solid fa-check"></i> Apply
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Split Modal -->
+    <div id="split-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 dark:bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="card-glass w-full max-w-sm transform scale-95 transition-transform duration-300 relative shadow-2xl" id="split-modal-content">
+            <button onclick="closeModal('split-modal')" class="absolute top-5 right-5 text-gray-400 hover:text-emerald-500 transition text-xl outline-none">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center border border-emerald-300 dark:border-emerald-700/50 shadow-inner">
+                    <i class="fa-solid fa-scissors text-xl text-emerald-600 dark:text-emerald-400"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white tracking-wide">Split Range</h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium mb-5">Enter specific pages or ranges to extract.</p>
+            <input type="text" id="split-text-input" placeholder="e.g. 1-5, 8, 11-13" class="w-full bg-white dark:bg-slate-800/80 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-slate-800 dark:text-white placeholder-gray-400 font-medium focus:outline-none focus:border-emerald-400 dark:focus:border-emerald-500 focus:ring-1 focus:ring-emerald-400 transition-all mb-8 shadow-inner">
+            <div class="flex gap-3 justify-end relative z-10">
+                <button onclick="closeModal('split-modal')" class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition font-semibold">Cancel</button>
+                <button onclick="applyModalData('split-text-input', 'split-input', '/split', 'split-modal')" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 text-white hover:from-emerald-400 hover:to-green-400 font-bold transition-all shadow-lg shadow-emerald-500/30 flex items-center gap-2">
+                    <i class="fa-solid fa-check"></i> Split PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Number Modal -->
+    <div id="pagenum-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 dark:bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="card-glass w-full max-w-sm transform scale-95 transition-transform duration-300 relative shadow-2xl" id="pagenum-modal-content">
+            <button onclick="closeModal('pagenum-modal')" class="absolute top-5 right-5 text-gray-400 hover:text-cyan-500 transition text-xl outline-none">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-cyan-100 dark:bg-cyan-500/10 flex items-center justify-center border border-cyan-300 dark:border-cyan-700/50 shadow-inner">
+                    <i class="fa-solid fa-list-ol text-xl text-cyan-600 dark:text-cyan-400"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white tracking-wide">Page Numbers</h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium mb-5">Define formatting or position of numbering.</p>
+            <input type="text" id="pagenum-text-input" placeholder="e.g. Bottom Right" class="w-full bg-white dark:bg-slate-800/80 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-slate-800 dark:text-white placeholder-gray-400 font-medium focus:outline-none focus:border-cyan-400 dark:focus:border-cyan-500 focus:ring-1 focus:ring-cyan-400 transition-all mb-8 shadow-inner">
+            <div class="flex gap-3 justify-end relative z-10">
+                <button onclick="closeModal('pagenum-modal')" class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition font-semibold">Cancel</button>
+                <button onclick="applyModalData('pagenum-text-input', 'pagenum-input', '/pagenumbers', 'pagenum-modal')" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-400 hover:to-blue-400 font-bold transition-all shadow-lg shadow-cyan-500/30 flex items-center gap-2">
+                    <i class="fa-solid fa-check"></i> Add Numbers
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unlock Modal -->
+    <div id="unlock-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 dark:bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="card-glass w-full max-w-sm transform scale-95 transition-transform duration-300 relative shadow-2xl" id="unlock-modal-content">
+            <button onclick="closeModal('unlock-modal')" class="absolute top-5 right-5 text-gray-400 hover:text-purple-500 transition text-xl outline-none">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-500/10 flex items-center justify-center border border-purple-300 dark:border-purple-700/50 shadow-inner">
+                    <i class="fa-solid fa-lock-open text-xl text-purple-600 dark:text-purple-400"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white tracking-wide">Unlock PDF</h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium mb-5">Enter current password to unlock file.</p>
+            <input type="password" id="unlock-text-input" placeholder="Password" class="w-full bg-white dark:bg-slate-800/80 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-slate-800 dark:text-white placeholder-gray-400 font-medium focus:outline-none focus:border-purple-400 dark:focus:border-purple-500 focus:ring-1 focus:ring-purple-400 transition-all mb-8 shadow-inner">
+            <div class="flex gap-3 justify-end relative z-10">
+                <button onclick="closeModal('unlock-modal')" class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition font-semibold">Cancel</button>
+                <button onclick="applyModalData('unlock-text-input', 'unlock-input', '/unlock', 'unlock-modal')" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white hover:from-purple-400 hover:to-indigo-400 font-bold transition-all shadow-lg shadow-purple-500/30 flex items-center gap-2">
+                    <i class="fa-solid fa-unlock-keyhole"></i> Unlock
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Protect Modal -->
+    <div id="protect-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 dark:bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="card-glass w-full max-w-sm transform scale-95 transition-transform duration-300 relative shadow-2xl" id="protect-modal-content">
+            <button onclick="closeModal('protect-modal')" class="absolute top-5 right-5 text-gray-400 hover:text-red-500 transition text-xl outline-none">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-500/10 flex items-center justify-center border border-red-300 dark:border-red-700/50 shadow-inner">
+                    <i class="fa-solid fa-lock text-xl text-red-600 dark:text-red-400"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white tracking-wide">Protect PDF</h3>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium mb-5">Set a new password to encrypt document.</p>
+            <input type="password" id="protect-text-input" placeholder="New Password" class="w-full bg-white dark:bg-slate-800/80 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-slate-800 dark:text-white placeholder-gray-400 font-medium focus:outline-none focus:border-red-400 dark:focus:border-red-500 focus:ring-1 focus:ring-red-400 transition-all mb-8 shadow-inner">
+            <div class="flex gap-3 justify-end relative z-10">
+                <button onclick="closeModal('protect-modal')" class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition font-semibold">Cancel</button>
+                <button onclick="applyModalData('protect-text-input', 'protect-input', '/protect', 'protect-modal')" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 text-white hover:from-red-400 hover:to-rose-500 font-bold transition-all shadow-lg shadow-red-500/30 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> Protect
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visual Interactive PDF Editor Full-Screen Modal -->
+    <div id="visual-editor-modal" class="fixed inset-0 z-[100] flex flex-col bg-slate-900 hidden opacity-0 transition-opacity duration-300 overflow-hidden">
+        
+        <!-- Editor Header -->
+        <div class="h-16 w-full glass-panel border-b border-white/10 flex items-center justify-between px-6 z-20">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/50 shadow-inner">
+                    <i class="fa-solid fa-pen-ruler text-blue-400"></i>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold tracking-wide leading-none">Studio Edit</h3>
+                    <p class="text-xs text-blue-400 font-semibold" id="editor-filename">document.pdf</p>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="flex items-center gap-4 bg-slate-800/80 rounded-xl px-4 py-2 border border-white/5 shadow-2xl relative z-50">
+                <button type="button" onclick="addTextToCanvas()" class="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg transition shadow-[0_0_15px_rgba(37,99,235,0.4)] flex items-center gap-2">
+                    <i class="fa-solid fa-t"></i> Add Text
+                </button>
+                <button type="button" onclick="addEraserToCanvas()" class="text-sm font-semibold text-slate-800 bg-white hover:bg-gray-200 px-4 py-1.5 rounded-lg transition shadow-[0_0_15px_rgba(255,255,255,0.2)] flex items-center gap-2" title="Cover/Erase Text">
+                    <i class="fa-solid fa-eraser"></i> Erase
+                </button>
+                <div class="w-px h-6 bg-white/10"></div>
+                <input type="color" id="editor-color" value="#000000" class="w-8 h-8 rounded cursor-pointer bg-transparent border-0" onchange="updateSelectedTextColor(this.value)">
+                <input type="number" id="editor-fontsize" value="24" class="w-16 bg-slate-900 border border-white/10 rounded px-2 py-1 text-white text-sm" onchange="updateSelectedTextSize(this.value)" min="8" max="120">
+                <button type="button" onclick="deleteSelectedText()" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-400 transition" title="Delete Text">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="closeVisualEditor()" class="px-5 py-2 rounded-xl text-gray-300 hover:bg-white/5 transition font-semibold text-sm">Cancel</button>
+                <button onclick="bakeAndDownloadPDF(event)" class="px-6 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold shadow-lg shadow-emerald-500/30 flex items-center gap-2 text-sm hover:scale-105 transition transform">
+                    <i class="fa-solid fa-download"></i> Save & Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas Workspace -->
+        <div class="flex-1 w-full bg-slate-950 overflow-auto relative flex items-start justify-center p-8 custom-scrollbar">
+            <div id="canvas-wrapper" class="relative shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5 bg-white origin-top box-content">
+                <canvas id="pdf-render-canvas" class="absolute top-0 left-0 z-0"></canvas>
+                <div class="absolute top-0 left-0 w-full h-full z-10" id="fabric-container">
+                    <canvas id="fabric-overlay-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div id="editor-loader" class="absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center z-10 hidden backdrop-blur-sm">
+                <div class="loader-ring mb-4" style="width:50px; height:50px;"></div>
+                <p class="text-blue-400 font-bold animate-pulse">Rendering Studio Engine...</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Interactive Logic & Scripting -->
+    <script>
+        // --- Theme Toggle Logic ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        themeToggleBtn.addEventListener('click', () => {
+            const htmlClass = document.documentElement.classList;
+            if (htmlClass.contains('dark')) {
+                htmlClass.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                htmlClass.add('dark');
+                localStorage.theme = 'dark';
+            }
+        });
+
+        // --- Live Counter Animation ---
+        gsap.to("#counter", {
+            textContent: "1,270",
+            duration: 4,
+            ease: "power2.out",
+            snap: { textContent: 1 },
+            onComplete: function() {
+                setInterval(() => {
+                    const el = document.getElementById('counter');
+                    el.innerText = parseInt(el.innerText.replace(',', '')) + Math.floor(Math.random() * 3);
+                    el.innerText = Number(el.innerText).toLocaleString();
+                }, 4000);
+            }
+        });
+
+        // --- Drag and Drop Functionality ---
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+        const actionOptions = document.getElementById('action-options');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-active'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-active'), false);
+        });
+
+        let currentDataTransfer = new DataTransfer();
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if(files && files.length > 0) {
+                currentDataTransfer = new DataTransfer();
+                for(let i=0; i<files.length; i++) currentDataTransfer.items.add(files[i]);
+                fileInput.files = currentDataTransfer.files;
+                handleFiles(fileInput.files);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            currentDataTransfer = new DataTransfer();
+            for(let i=0; i<files.length; i++) currentDataTransfer.items.add(files[i]);
+            fileInput.files = currentDataTransfer.files;
+            handleFiles(fileInput.files);
+        });
+
+        function handleFiles(files) {
+            fileList.innerHTML = '';
+            
+            if (files.length > 0) {
+                actionOptions.classList.remove('hidden');
+                gsap.fromTo(actionOptions.children, 
+                    { scale: 0.9, opacity: 0, y: 15 }, 
+                    { scale: 1, opacity: 1, y: 0, duration: 0.5, stagger: 0.05, ease: "back.out(1.5)" }
+                );
+
+                Array.from(files).forEach((file, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center justify-between p-3 rounded-xl bg-blue-50/80 dark:bg-slate-800/80 border border-blue-100 dark:border-white/5 text-slate-700 dark:text-gray-200 opacity-0 transform translate-y-4 shadow-sm';
+                    const sizeKB = Math.round(file.size / 1024);
+                    const sizeStr = sizeKB > 1024 ? (sizeKB/1024).toFixed(2) + ' MB' : sizeKB + ' KB';
+                    
+                    item.innerHTML = `
+                        <div class="flex items-center gap-3 overflow-hidden">
+                            <i class="fa-solid fa-file-pdf text-xl text-red-500"></i> 
+                            <span class="truncate font-bold">${file.name}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-blue-600 dark:text-cyan-400 font-bold tracking-wide">${sizeStr}</span>
+                            <button type="button" onclick="removeFile(event, ${index})" class="w-7 h-7 flex items-center justify-center rounded-full bg-red-100 dark:bg-slate-700/50 text-red-500 hover:bg-red-500 hover:text-white dark:hover:bg-red-500/80 transition shadow-sm z-50">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                    fileList.appendChild(item);
+
+                    gsap.to(item, { y: 0, opacity: 1, duration: 0.4, delay: index * 0.1, ease: "power2.out" });
+                });
+            } else {
+                actionOptions.classList.add('hidden');
+            }
+        }
+
+        function removeFile(event, index) {
+            event.stopPropagation();
+            event.preventDefault();
+            
+            const dt = new DataTransfer();
+            for(let i=0; i<currentDataTransfer.files.length; i++) {
+                if (i !== index) dt.items.add(currentDataTransfer.files[i]);
+            }
+            currentDataTransfer = dt;
+            fileInput.files = currentDataTransfer.files;
+            handleFiles(fileInput.files);
+        }
+        
+        dropZone.addEventListener('click', (e) => {
+            const avoidTags = ['LABEL', 'INPUT', 'BUTTON', 'I'];
+            if(!avoidTags.includes(e.target.tagName)) {
+                fileInput.click();
+            }
+        });
+
+        // --- Dynamic Loader & Fetch Routine ---
+        async function triggerAction(route) {
+            const form = document.getElementById('upload-form');
+            const fileInput = document.getElementById('file-input');
+            const loader = document.getElementById('full-loader');
+            const loaderTitle = document.getElementById('loader-title');
+            const loaderSubtitle = document.getElementById('loader-subtitle');
+
+            if(fileInput.files.length === 0) return;
+
+            // State 1: Uploading
+            loaderTitle.innerText = "Uploading Document...";
+            loaderSubtitle.innerText = "Preparing secure transfer...";
+            loader.classList.remove('hidden');
+            void loader.offsetWidth; 
+            loader.classList.remove('opacity-0');
+
+            const formData = new FormData(form);
+
+            try {
+                // State 2: Processing (Fake progression switch)
+                const processingTimeout = setTimeout(() => {
+                    loaderTitle.innerText = "Processing & Optimizing...";
+                    loaderSubtitle.innerText = "Applying strict UAE document standards...";
+                }, 1200);
+
+                const response = await fetch(route, { method: 'POST', body: formData });
+
+                clearTimeout(processingTimeout);
+
+                if(response.ok) {
+                    // State 3: Success & Download
+                    loaderTitle.innerText = "Success! Downloading...";
+                    loaderSubtitle.innerText = "Your file is perfectly ready.";
+                    
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    
+                    
+                    // Calculate filename based on the original uploaded file
+                    let baseFileName = fileInput.files[0].name;
+                    let filename = baseFileName;
+
+                    // Scrape explicit disposition for converted extensions like .docx or .zip
+                    const disposition = response.headers.get('Content-Disposition');
+                    if (disposition && disposition.indexOf('attachment') !== -1) {
+                        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        const matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1]) {
+                            let backendName = matches[1].replace(/['"]/g, '');
+                            let extension = backendName.includes('.') ? backendName.substring(backendName.lastIndexOf('.')) : '.pdf';
+                            let nameWithoutExt = baseFileName.substring(0, baseFileName.lastIndexOf('.')) || baseFileName;
+                            filename = nameWithoutExt + extension;
+                        }
+                    }
+
+
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = downloadUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(downloadUrl);
+                        document.body.removeChild(a);
+                    }, 100);
+                    
+                } else {
+                    loaderTitle.innerText = "Processing Failed";
+                    loaderSubtitle.innerText = "Something went wrong in the server. Please check file format.";
+                }
+            } catch (err) {
+                loaderTitle.innerText = "Connection Error";
+                loaderSubtitle.innerText = "Check your internet connection and try again.";
+            } finally {
+                // Remove loader gracefully after user reads success
+                setTimeout(() => {
+                    loader.classList.add('opacity-0');
+                    setTimeout(() => loader.classList.add('hidden'), 300);
+                }, 2500); 
+            }
+        }
+
+        // --- Modals Logic ---
+        function openModal(modalId, inputId) {
+            const modal = document.getElementById(modalId);
+            const content = document.getElementById(modalId + '-content');
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+            setTimeout(() => document.getElementById(inputId).focus(), 300);
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const content = document.getElementById(modalId + '-content');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function applyModalData(inputId, hiddenId, route, modalId) {
+            const textInput = document.getElementById(inputId);
+            const text = textInput.value.trim();
+            
+            if(!text) {
+                gsap.fromTo(textInput, { x: -8 }, { x: 8, duration: 0.08, yoyo: true, repeat: 4 });
+                textInput.classList.add('border-red-400', 'ring-red-400');
+                setTimeout(() => textInput.classList.remove('border-red-400', 'ring-red-400'), 500);
+                return;
+            }
+            
+            document.getElementById(hiddenId).value = text;
+            closeModal(modalId);
+            triggerAction(route);
+        }
+
+        // Modal triggers for outside-click logic
+        ['watermark-modal', 'split-modal', 'pagenum-modal', 'unlock-modal', 'protect-modal'].forEach(id => {
+            const m = document.getElementById(id);
+            m.addEventListener('click', (e) => { if (e.target === m) closeModal(id); });
+        });
+
+        // --- Visual Studio Editor Logic ---
+        let currentPdfDoc = null;
+        let currentPdfPage = null;
+        let fabricCanvas = null;
+        let pdfBytesOriginal = null;
+        let currentPdfScale = 1.2;
+
+        async function openVisualEditor() {
+            if(!currentDataTransfer.files || currentDataTransfer.files.length === 0) {
+                alert("Please select a PDF file first.");
+                return;
+            }
+            const file = currentDataTransfer.files[0];
+            
+            document.getElementById('editor-filename').innerText = file.name;
+            const modal = document.getElementById('visual-editor-modal');
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+
+            document.getElementById('editor-loader').classList.remove('hidden');
+            
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                pdfBytesOriginal = arrayBuffer.slice(0); // clone 
+                
+                const loadingTask = pdfjsLib.getDocument(new Uint8Array(arrayBuffer));
+                currentPdfDoc = await loadingTask.promise;
+                currentPdfPage = await currentPdfDoc.getPage(1);
+                
+                renderEditorCanvas();
+            } catch(e) {
+                console.error(e);
+                alert("Failed to load PDF preview.");
+                closeVisualEditor();
+            }
+        }
+
+        function renderEditorCanvas() {
+            const viewport = currentPdfPage.getViewport({ scale: currentPdfScale });
+            const pdfCanvas = document.getElementById('pdf-render-canvas');
+            const wrapper = document.getElementById('canvas-wrapper');
+
+            const context = pdfCanvas.getContext('2d');
+            pdfCanvas.height = viewport.height;
+            pdfCanvas.width = viewport.width;
+            
+            wrapper.style.width = viewport.width + 'px';
+            wrapper.style.height = viewport.height + 'px';
+
+            const renderContext = { canvasContext: context, viewport: viewport };
+            
+            currentPdfPage.render(renderContext).promise.then(() => {
+                if(fabricCanvas) fabricCanvas.dispose();
+                
+                fabricCanvas = new fabric.Canvas('fabric-overlay-canvas', {
+                    width: viewport.width,
+                    height: viewport.height
+                });
+                
+                fabricCanvas.defaultCursor = 'text';
+
+                // Setup sync listeners for toolbar
+                fabricCanvas.on('selection:created', syncToolbar);
+                fabricCanvas.on('selection:updated', syncToolbar);
+
+                document.getElementById('editor-loader').classList.add('hidden');
+            });
+        }
+
+        function syncToolbar(e) {
+            const obj = e.selected[0];
+            if(obj) {
+                if(obj.fill && typeof obj.fill === 'string' && obj.fill.startsWith('#')) document.getElementById('editor-color').value = obj.fill;
+                if(obj.type === 'i-text' && obj.fontSize) {
+                    document.getElementById('editor-fontsize').value = obj.fontSize;
+                }
+            }
+        }
+
+        function closeVisualEditor() {
+            const modal = document.getElementById('visual-editor-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+            if(fabricCanvas) fabricCanvas.clear();
+        }
+
+        function addTextToCanvas() {
+            if(!fabricCanvas) return;
+            const textContent = new fabric.IText('Type here (Arabic/Eng)', {
+                left: fabricCanvas.width / 2 - 100,
+                top: fabricCanvas.height / 2,
+                fontFamily: 'sans-serif',
+                fill: document.getElementById('editor-color').value,
+                fontSize: parseInt(document.getElementById('editor-fontsize').value) || 24,
+                transparentCorners: false,
+                cornerColor: '#00F0FF',
+                cornerStrokeColor: '#00F0FF',
+                borderColor: '#00F0FF',
+                cornerSize: 10,
+                padding: 10,
+                cornerStyle: 'circle'
+            });
+            fabricCanvas.add(textContent);
+            fabricCanvas.setActiveObject(textContent);
+            fabricCanvas.requestRenderAll();
+        }
+
+        function addEraserToCanvas() {
+            if(!fabricCanvas) return;
+            const rect = new fabric.Rect({
+                left: fabricCanvas.width / 2 - 50,
+                top: fabricCanvas.height / 2 - 15,
+                fill: document.getElementById('editor-color').value || '#FFFFFF',
+                width: 150,
+                height: 30,
+                transparentCorners: false,
+                cornerColor: '#00F0FF',
+                borderColor: '#00F0FF',
+                cornerSize: 8,
+                opacity: 1
+            });
+            fabricCanvas.add(rect);
+            fabricCanvas.setActiveObject(rect);
+            fabricCanvas.requestRenderAll();
+        }
+
+        function updateSelectedTextColor(color) {
+            const obj = fabricCanvas.getActiveObject();
+            if(obj && (obj.type === 'i-text' || obj.type === 'rect')) {
+                obj.set('fill', color);
+                fabricCanvas.requestRenderAll();
+            }
+        }
+
+        function updateSelectedTextSize(size) {
+            const obj = fabricCanvas.getActiveObject();
+            if(obj && obj.type === 'i-text') {
+                obj.set('fontSize', parseInt(size));
+                fabricCanvas.requestRenderAll();
+            }
+        }
+
+        function deleteSelectedText() {
+            if(!fabricCanvas) return;
+            const obj = fabricCanvas.getActiveObject();
+            if(obj) fabricCanvas.remove(obj);
+        }
+
+        async function bakeAndDownloadPDF(event) {
+            const btn = event.currentTarget;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Baking PDF...`;
+            
+            try {
+                const pdfDoc = await PDFLib.PDFDocument.load(pdfBytesOriginal);
+                const pages = pdfDoc.getPages();
+                const page = pages[0]; // Currently only edits Page 1
+                const { height } = page.getSize();
+                
+                const objects = fabricCanvas.getObjects('i-text');
+                
+                for(let obj of objects) {
+                    const pdfX = obj.left / currentPdfScale;
+                    // Fabric Y is from top-left. PDF-lib Y is from bottom-left.
+                    // Accurate transformation considering text height baseline:
+                    const pdfY = height - (obj.top / currentPdfScale) - (obj.fontSize / currentPdfScale);
+
+                    const hexToRgb = hex => {
+                        let bigint = parseInt(hex.replace('#',''), 16);
+                        return { r: ((bigint >> 16) & 255)/255, g: ((bigint >> 8) & 255)/255, b: (bigint & 255)/255 };
+                    };
+                    const color = hexToRgb(obj.fill);
+
+                    page.drawText(obj.text || "", {
+                        x: pdfX,
+                        y: pdfY,
+                        size: obj.fontSize / currentPdfScale,
+                        color: PDFLib.rgb(color.r, color.g, color.b),
+                    });
+                }
+
+                // Bake Erasers (Custom colored rectangles)
+                const rects = fabricCanvas.getObjects('rect');
+                for(let rect of rects) {
+                    const pdfX = rect.left / currentPdfScale;
+                    const rHeight = (rect.height * rect.scaleY) / currentPdfScale;
+                    const rWidth = (rect.width * rect.scaleX) / currentPdfScale;
+                    const pdfY = height - (rect.top / currentPdfScale) - rHeight;
+                    
+                    const hexToRgb = hex => {
+                        let bigint = parseInt(hex.replace('#',''), 16);
+                        return { r: ((bigint >> 16) & 255)/255, g: ((bigint >> 8) & 255)/255, b: (bigint & 255)/255 };
+                    };
+                    const color = hexToRgb(rect.fill || '#FFFFFF');
+                    
+                    page.drawRectangle({
+                        x: pdfX,
+                        y: pdfY,
+                        width: rWidth,
+                        height: rHeight,
+                        color: PDFLib.rgb(color.r, color.g, color.b),
+                    });
+                }
+
+                const pdfBytes = await pdfDoc.save();
+                
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                
+                let baseFileName = document.getElementById('editor-filename').innerText;
+                let extIndex = baseFileName.lastIndexOf('.');
+                let outName = (extIndex > -1 ? baseFileName.substring(0, extIndex) : baseFileName) + '_Edited.pdf';
+
+                a.download = outName;
+                document.body.appendChild(a);
+                a.click();
+                
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }, 100);
+
+                closeVisualEditor();
+
+            } catch(e) {
+                console.error(e);
+                alert("Error baking PDF! Could not process the file.");
+            } finally {
+                btn.innerHTML = originalHtml;
+            }
+        }
+
+        async function loadTemplateIntoEditor(url, filename) {
+            document.getElementById('editor-filename').innerText = filename;
+            const modal = document.getElementById('visual-editor-modal');
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            document.getElementById('editor-loader').classList.remove('hidden');
+
+            try {
+                const response = await fetch(url);
+                if(!response.ok) throw new Error("File not found");
+                
+                const arrayBuffer = await response.arrayBuffer();
+                pdfBytesOriginal = arrayBuffer.slice(0);
+                
+                const loadingTask = pdfjsLib.getDocument(new Uint8Array(arrayBuffer));
+                currentPdfDoc = await loadingTask.promise;
+                currentPdfPage = await currentPdfDoc.getPage(1);
+                
+                renderEditorCanvas();
+            } catch(e) {
+                console.error(e);
+                alert("Could not load the template. Make sure the file exists in " + url);
+                closeVisualEditor();
+            }
+        }
+
+    </script>
+</body>
+</html>
